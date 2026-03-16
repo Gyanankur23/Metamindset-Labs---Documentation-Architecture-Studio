@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/", "destination": "/metamindset-labs-v2.html" }
+  ]
+}
