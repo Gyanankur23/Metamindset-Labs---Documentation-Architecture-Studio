@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MetaMindset Labs — Documentation Architecture Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@300;400;500&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<style>
+:root {
+  --ink:     #0e0e0c;
+  --deep:    #141410;
+  --panel:   #1a1a16;
+  --rule:    rgba(220,210,185,0.1);
+  --cream:   #ddd4b9;
+  --cream2:  #c8bc9e;
+  --muted:   rgba(220,210,185,0.45);
+  --faint:   rgba(220,210,185,0.12);
+  --red:     #c0392b;
+  --red-dim: rgba(192,57,43,0.12);
+  --mono:    'IBM Plex Mono', monospace;
+  --serif:   'Libre Baskerville', serif;
+  --sans:    'Barlow', sans-serif;
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+
+body {
+  font-family: var(--sans);
+  background: var(--ink);
+  color: var(--cream);
+  overflow-x: hidden;
+}
+
+/* ── PAPER GRAIN ── */
+body::after {
+  content:'';
+  position:fixed; inset:0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events:none; z-index:999; opacity:.5;
+}
+
+/* ── RULE LINES BG ── */
+.ruled-bg {
+  position:fixed; inset:0; pointer-events:none; z-index:0;
+  background-image: repeating-linear-gradient(
+    transparent, transparent 39px,
+    rgba(220,210,185,0.03) 39px, rgba(220,210,185,0.03) 40px
+  );
+}
+
+/* ── NAV ── */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  padding:0 5rem;
+  height:64px;
+  display:flex; align-items:center; justify-content:space-between;
+  background:rgba(14,14,12,0.88);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--rule);
+}
+
+.nav-brand { display:flex; align-items:center; gap:1rem; text-decoration:none; }
+
+.nav-logomark {
+  width:32px; height:32px;
+  border:1px solid var(--cream2);
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--mono); font-size:0.7rem; font-weight:500;
+  color:var(--cream); letter-spacing:-0.05em;
+}
+
+.nav-wordmark {
+  font-family:var(--serif); font-size:0.95rem; color:var(--cream);
+  letter-spacing:0.01em;
+}
+.nav-wordmark span { color:var(--cream2); font-style:italic; }
+
+.nav-links { display:flex; gap:2.5rem; list-style:none; }
+.nav-links a {
+  font-family:var(--mono); font-size:0.7rem; letter-spacing:0.1em;
+  text-transform:uppercase; color:var(--muted); text-decoration:none;
+  transition:color .2s;
+}
+.nav-links a:hover { color:var(--cream); }
+
+.nav-hire {
+  font-family:var(--mono); font-size:0.7rem; letter-spacing:0.1em;
+  text-transform:uppercase; color:var(--ink) !important;
+  background:var(--cream); padding:.45rem 1.2rem;
+  transition:background .2s !important;
+}
+.nav-hire:hover { background:#fff !important; }
+
+/* ── HERO ── */
+.hero {
+  min-height:100vh;
+  display:grid; grid-template-columns:1fr 1fr;
+  align-items:center;
+  padding:8rem 5rem 5rem;
+  position:relative; z-index:1;
+  gap:5rem;
+}
+
+.hero::before {
+  content:'';
+  position:absolute; top:0; right:0;
+  width:50%; height:100%;
+  border-left:1px solid var(--rule);
+  pointer-events:none;
+}
+
+.hero-kicker {
+  font-family:var(--mono); font-size:0.68rem; letter-spacing:0.18em;
+  text-transform:uppercase; color:var(--cream2);
+  display:flex; align-items:center; gap:.8rem;
+  margin-bottom:2.5rem;
+  animation: fadeUp .6s ease both;
+}
+.hero-kicker::before {
+  content:''; width:28px; height:1px; background:var(--cream2);
+}
+
+.hero h1 {
+  font-family:var(--serif);
+  font-size:clamp(3rem,5.5vw,5.2rem);
+  font-weight:700; line-height:1.08;
+  letter-spacing:-0.02em;
+  margin-bottom:2rem;
+  animation:fadeUp .6s .08s ease both;
+}
+.hero h1 em { font-style:italic; color:var(--cream2); }
+.hero h1 .strike {
+  position:relative; color:rgba(220,210,185,0.3);
+}
+.hero h1 .strike::after {
+  content:''; position:absolute;
+  left:0; top:52%; width:100%; height:2px;
+  background:var(--red);
+}
+
+.hero-desc {
+  font-size:1.05rem; line-height:1.75; color:var(--muted);
+  max-width:440px; margin-bottom:3rem; font-weight:300;
+  animation:fadeUp .6s .16s ease both;
+}
+.hero-desc strong { color:var(--cream); font-weight:500; }
+
+.hero-actions {
+  display:flex; gap:1rem; flex-wrap:wrap;
+  animation:fadeUp .6s .24s ease both;
+}
+
+.btn-primary {
+  font-family:var(--mono); font-size:0.72rem; letter-spacing:0.12em;
+  text-transform:uppercase;
+  padding:.8rem 2rem;
+  background:var(--cream); color:var(--ink);
+  border:none; cursor:pointer;
+  transition:all .2s;
+  text-decoration:none; display:inline-block;
+}
+.btn-primary:hover { background:#fff; transform:translateY(-2px); }
+
+.btn-outline {
+  font-family:var(--mono); font-size:0.72rem; letter-spacing:0.12em;
+  text-transform:uppercase;
+  padding:.8rem 2rem;
+  background:transparent; color:var(--cream);
+  border:1px solid var(--rule); cursor:pointer;
+  transition:all .2s; text-decoration:none; display:inline-block;
+}
+.btn-outline:hover { border-color:var(--cream2); color:var(--cream2); }
+
+/* HERO RIGHT — specimen block */
+.hero-right {
+  position:relative;
+  animation:fadeUp .6s .3s ease both;
+}
+
+.specimen {
+  background:var(--panel);
+  border:1px solid var(--rule);
+  padding:2.5rem;
+  position:relative;
+}
+
+.specimen-header {
+  font-family:var(--mono); font-size:0.62rem; letter-spacing:0.15em;
+  text-transform:uppercase; color:var(--muted);
+  display:flex; justify-content:space-between;
+  margin-bottom:1.8rem;
+  padding-bottom:1rem;
+  border-bottom:1px solid var(--rule);
+}
+
+.specimen-body { display:flex; flex-direction:column; gap:1.2rem; }
+
+.spec-line {
+  display:grid; grid-template-columns:120px 1fr;
+  gap:1.5rem; align-items:baseline;
+}
+.spec-key {
+  font-family:var(--mono); font-size:0.65rem; letter-spacing:0.1em;
+  color:var(--muted); text-transform:uppercase;
+}
+.spec-val {
+  font-family:var(--serif); font-size:1rem;
+  color:var(--cream); line-height:1.4;
+}
+.spec-val.mono { font-family:var(--mono); font-size:0.78rem; color:var(--cream2); }
+
+.specimen-footer {
+  margin-top:2rem; padding-top:1rem;
+  border-top:1px solid var(--rule);
+  display:flex; justify-content:space-between; align-items:center;
+}
+.spec-tag {
+  font-family:var(--mono); font-size:0.6rem; letter-spacing:0.1em;
+  text-transform:uppercase; padding:.25rem .7rem;
+  border:1px solid var(--rule); color:var(--muted);
+}
+.spec-tag.live { border-color:rgba(192,57,43,.4); color:var(--red); }
+
+/* floating rule accent */
+.rule-accent {
+  position:absolute; left:-2rem; top:2rem; bottom:2rem;
+  width:1px; background:linear-gradient(to bottom, transparent, var(--cream2), transparent);
+}
+
+/* ── SECTION BASE ── */
+section { padding:7rem 5rem; position:relative; z-index:1; }
+
+.sec-label {
+  font-family:var(--mono); font-size:0.65rem; letter-spacing:0.2em;
+  text-transform:uppercase; color:var(--cream2);
+  display:flex; align-items:center; gap:1rem;
+  margin-bottom:1.5rem;
+}
+.sec-label::after { content:''; width:32px; height:1px; background:var(--cream2); }
+
+.sec-h {
+  font-family:var(--serif);
+  font-size:clamp(2rem,3.8vw,3.2rem);
+  font-weight:700; line-height:1.1;
+  letter-spacing:-0.02em; margin-bottom:1rem;
+}
+.sec-h em { font-style:italic; color:var(--cream2); }
+
+.sec-sub {
+  color:var(--muted); font-size:1rem; line-height:1.75;
+  max-width:520px; font-weight:300;
+}
+
+/* ── PROBLEM SECTION ── */
+.problem {
+  border-top:1px solid var(--rule);
+  background:var(--deep);
+}
+
+.problem-grid {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:5rem; margin-top:4rem;
+}
+
+.problem-col h3 {
+  font-family:var(--serif); font-size:1.2rem;
+  margin-bottom:1.5rem;
+  padding-bottom:1rem;
+  border-bottom:1px solid var(--rule);
+}
+.problem-col h3 em { font-style:italic; color:var(--cream2); }
+
+.problem-items { display:flex; flex-direction:column; gap:1rem; }
+
+.prob-item {
+  display:flex; gap:1rem; align-items:flex-start;
+  padding:1.2rem 1.4rem;
+  border:1px solid var(--rule);
+  transition:border-color .3s;
+}
+.prob-item:hover { border-color:rgba(220,210,185,0.2); }
+
+.prob-icon {
+  font-family:var(--mono); font-size:0.7rem; letter-spacing:0.05em;
+  color:var(--red); flex-shrink:0; padding-top:.15rem;
+}
+.prob-icon.good { color:#4caf82; }
+
+.prob-text { font-size:0.85rem; color:var(--muted); line-height:1.65; }
+.prob-text strong { color:var(--cream); font-weight:500; display:block; margin-bottom:.2rem; }
+
+/* ── SERVICES ── */
+.services { border-top:1px solid var(--rule); }
+
+.services-table {
+  margin-top:4rem;
+  border:1px solid var(--rule);
+}
+
+.services-row {
+  display:grid;
+  grid-template-columns:3rem 1fr 2fr 140px 160px;
+  gap:0;
+  border-bottom:1px solid var(--rule);
+  transition:background .2s;
+}
+.services-row:last-child { border-bottom:none; }
+.services-row:not(.header):hover { background:var(--faint); }
+
+.services-row.header {
+  background:var(--panel);
+}
+
+.sr-cell {
+  padding:1.4rem 1.5rem;
+  border-right:1px solid var(--rule);
+  display:flex; align-items:center;
+}
+.sr-cell:last-child { border-right:none; }
+
+.sr-cell.header-cell {
+  font-family:var(--mono); font-size:0.6rem; letter-spacing:0.15em;
+  text-transform:uppercase; color:var(--muted);
+}
+
+.sr-num {
+  font-family:var(--mono); font-size:0.7rem; color:var(--muted);
+}
+
+.sr-name {
+  font-family:var(--serif); font-size:1rem; font-weight:700;
+  flex-direction:column; align-items:flex-start; gap:.3rem;
+}
+.sr-name span {
+  font-family:var(--mono); font-size:0.62rem; letter-spacing:.08em;
+  color:var(--cream2); font-weight:400;
+}
+
+.sr-desc {
+  font-size:0.82rem; color:var(--muted); line-height:1.6;
+  flex-direction:column; align-items:flex-start; gap:.5rem;
+}
+
+.sr-desc-tags { display:flex; flex-wrap:wrap; gap:.4rem; }
+.tag {
+  font-family:var(--mono); font-size:0.6rem; letter-spacing:.06em;
+  padding:.2rem .6rem; border:1px solid var(--rule); color:var(--muted);
+}
+
+.sr-price {
+  font-family:var(--serif); font-size:1.1rem; font-weight:700;
+  flex-direction:column; align-items:flex-start; gap:.1rem;
+}
+.sr-price small {
+  font-family:var(--mono); font-size:0.6rem; color:var(--muted);
+  font-weight:400;
+}
+
+.sr-action { justify-content:center; }
+
+.pay-btn {
+  font-family:var(--mono); font-size:0.62rem; letter-spacing:.1em;
+  text-transform:uppercase; padding:.6rem 1.1rem;
+  background:transparent; color:var(--cream);
+  border:1px solid var(--rule); cursor:pointer;
+  transition:all .2s; white-space:nowrap;
+}
+.pay-btn:hover { background:var(--cream); color:var(--ink); }
+.pay-btn.featured {
+  background:var(--cream); color:var(--ink); border-color:var(--cream);
+}
+.pay-btn.featured:hover { background:#fff; }
+
+/* ── PROCESS ── */
+.process { background:var(--deep); border-top:1px solid var(--rule); }
+
+.process-steps {
+  display:grid; grid-template-columns:repeat(4,1fr);
+  margin-top:4rem; border:1px solid var(--rule);
+}
+
+.process-step {
+  padding:2.5rem 2rem;
+  border-right:1px solid var(--rule);
+  position:relative;
+  transition:background .3s;
+}
+.process-step:last-child { border-right:none; }
+.process-step:hover { background:var(--faint); }
+
+.step-n {
+  font-family:var(--mono); font-size:0.62rem; letter-spacing:.15em;
+  color:var(--cream2); text-transform:uppercase;
+  margin-bottom:1.5rem;
+}
+
+.step-title {
+  font-family:var(--serif); font-size:1.1rem; font-weight:700;
+  margin-bottom:.8rem; line-height:1.2;
+}
+
+.step-desc {
+  font-size:0.82rem; color:var(--muted); line-height:1.65;
+}
+
+.step-arrow {
+  position:absolute; right:-12px; top:50%;
+  transform:translateY(-50%);
+  font-family:var(--mono); font-size:0.8rem; color:var(--rule);
+  z-index:2; background:var(--deep); padding:.2rem;
+}
+
+/* ── STACK SECTION ── */
+.stack { border-top:1px solid var(--rule); }
+
+.stack-grid {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:5rem; margin-top:4rem; align-items:start;
+}
+
+.stack-code {
+  background:var(--panel);
+  border:1px solid var(--rule);
+  padding:0;
+  overflow:hidden;
+}
+
+.code-header {
+  padding:.8rem 1.2rem;
+  background:rgba(220,210,185,0.04);
+  border-bottom:1px solid var(--rule);
+  display:flex; align-items:center; gap:.8rem;
+}
+
+.code-dot { width:8px; height:8px; border-radius:50%; }
+.code-dot:nth-child(1) { background:#c0392b; }
+.code-dot:nth-child(2) { background:#c9a84c; }
+.code-dot:nth-child(3) { background:#4caf82; }
+
+.code-filename {
+  font-family:var(--mono); font-size:0.65rem; letter-spacing:.08em;
+  color:var(--muted); margin-left:.5rem;
+}
+
+.code-body {
+  padding:1.5rem;
+  font-family:var(--mono); font-size:0.72rem; line-height:1.9;
+  color:rgba(220,210,185,0.65);
+  overflow-x:auto;
+}
+
+.c-comment { color:rgba(220,210,185,0.3); }
+.c-key     { color:#c9a84c; }
+.c-str     { color:#4caf82; }
+.c-fn      { color:#7cb9e8; }
+.c-num     { color:#c0392b; }
+
+.stack-right { display:flex; flex-direction:column; gap:1.5rem; }
+
+.tech-item {
+  display:flex; gap:1.4rem; align-items:flex-start;
+  padding:1.5rem;
+  border:1px solid var(--rule);
+  transition:all .3s;
+}
+.tech-item:hover { border-color:rgba(220,210,185,0.2); transform:translateX(6px); }
+
+.tech-badge {
+  font-family:var(--mono); font-size:0.65rem; letter-spacing:.08em;
+  padding:.4rem .8rem; border:1px solid var(--rule);
+  color:var(--cream2); flex-shrink:0; white-space:nowrap;
+}
+
+.tech-name { font-weight:600; font-size:.9rem; margin-bottom:.25rem; }
+.tech-desc { font-size:0.8rem; color:var(--muted); line-height:1.6; }
+
+/* ── WHO ── */
+.who { background:var(--deep); border-top:1px solid var(--rule); }
+
+.who-grid {
+  display:grid; grid-template-columns:repeat(4,1fr);
+  gap:0; margin-top:4rem;
+  border:1px solid var(--rule);
+}
+
+.who-card {
+  padding:2.5rem 1.8rem;
+  border-right:1px solid var(--rule);
+  transition:background .3s;
+}
+.who-card:last-child { border-right:none; }
+.who-card:hover { background:var(--faint); }
+
+.who-icon { font-size:2rem; margin-bottom:1.2rem; }
+
+.who-title {
+  font-family:var(--serif); font-size:1rem; font-weight:700;
+  margin-bottom:.6rem;
+}
+
+.who-desc { font-size:0.8rem; color:var(--muted); line-height:1.65; }
+
+.who-pain {
+  margin-top:1rem; padding-top:1rem;
+  border-top:1px solid var(--rule);
+  font-family:var(--mono); font-size:0.65rem; letter-spacing:.05em;
+  color:var(--red); line-height:1.5;
+}
+.who-pain::before { content:'Pain: '; color:var(--muted); }
+
+/* ── AI SECTION ── */
+.ai-sec { border-top:1px solid var(--rule); }
+
+.ai-grid { display:grid; grid-template-columns:1fr 1fr; gap:5rem; align-items:center; }
+
+.chat-terminal {
+  background:var(--panel);
+  border:1px solid var(--rule);
+  overflow:hidden;
+}
+
+.terminal-bar {
+  padding:.7rem 1.2rem;
+  background:rgba(220,210,185,0.04);
+  border-bottom:1px solid var(--rule);
+  display:flex; align-items:center; gap:.8rem;
+}
+.t-dot { width:8px; height:8px; border-radius:50%; }
+.t-dot:nth-child(1) { background:#c0392b; }
+.t-dot:nth-child(2) { background:#c9a84c; }
+.t-dot:nth-child(3) { background:#4caf82; }
+.terminal-title {
+  font-family:var(--mono); font-size:0.62rem; letter-spacing:.1em;
+  color:var(--muted); text-transform:uppercase; margin-left:.5rem;
+}
+.t-live {
+  margin-left:auto; font-family:var(--mono); font-size:0.6rem;
+  color:#4caf82; letter-spacing:.08em;
+}
+.t-live::before { content:'● '; }
+
+.chat-log {
+  padding:1.5rem;
+  min-height:300px; max-height:300px;
+  overflow-y:auto; display:flex; flex-direction:column; gap:.8rem;
+  scrollbar-width:thin; scrollbar-color:var(--rule) transparent;
+}
+
+.tlog { display:flex; gap:.8rem; }
+.tlog.user { flex-direction:row-reverse; }
+
+.tlog-who {
+  font-family:var(--mono); font-size:0.58rem; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--muted);
+  padding:.6rem .8rem; background:var(--faint);
+  flex-shrink:0; align-self:flex-start;
+  white-space:nowrap;
+}
+.tlog.user .tlog-who { color:var(--cream2); }
+
+.tlog-msg {
+  font-size:0.8rem; color:rgba(220,210,185,0.75); line-height:1.65;
+  border:1px solid var(--rule); padding:.8rem 1rem;
+}
+.tlog.user .tlog-msg { border-color:rgba(220,210,185,0.15); }
+
+.typing-row { display:flex; gap:.8rem; align-items:center; }
+.typing-dots { display:flex; gap:4px; padding:.8rem 1rem; border:1px solid var(--rule); }
+.t-dot-anim {
+  width:5px; height:5px; border-radius:50%; background:var(--cream2);
+  animation:td .9s infinite;
+}
+.t-dot-anim:nth-child(2) { animation-delay:.2s; }
+.t-dot-anim:nth-child(3) { animation-delay:.4s; }
+@keyframes td { 0%,60%,100% { opacity:.3; transform:scale(.8); } 30% { opacity:1; transform:scale(1); } }
+
+.chat-prompt {
+  display:flex; border-top:1px solid var(--rule);
+}
+.chat-prompt-label {
+  font-family:var(--mono); font-size:0.65rem; letter-spacing:.1em;
+  color:var(--cream2); padding:.9rem 1rem;
+  border-right:1px solid var(--rule); flex-shrink:0;
+}
+.chat-prompt input {
+  flex:1; background:transparent; border:none; outline:none;
+  font-family:var(--mono); font-size:0.75rem; color:var(--cream);
+  padding:.9rem 1rem;
+}
+.chat-prompt input::placeholder { color:var(--muted); }
+.chat-prompt button {
+  font-family:var(--mono); font-size:0.62rem; letter-spacing:.1em;
+  text-transform:uppercase; padding:.9rem 1.2rem;
+  background:var(--cream); color:var(--ink);
+  border:none; cursor:pointer; transition:background .2s;
+  border-left:1px solid var(--rule);
+}
+.chat-prompt button:hover { background:#fff; }
+
+.chip-row { display:flex; flex-wrap:wrap; gap:.5rem; padding:.8rem 1rem; border-top:1px solid var(--rule); }
+.chip {
+  font-family:var(--mono); font-size:0.6rem; letter-spacing:.06em;
+  padding:.25rem .7rem; border:1px solid var(--rule);
+  color:var(--muted); background:transparent; cursor:pointer;
+  transition:all .2s;
+}
+.chip:hover { border-color:var(--cream2); color:var(--cream2); }
+
+/* ── CTA ── */
+.cta {
+  border-top:1px solid var(--rule);
+  text-align:center;
+  padding:9rem 5rem;
+  position:relative; overflow:hidden;
+}
+
+.cta::before {
+  content:'';
+  position:absolute; inset:0;
+  background:radial-gradient(ellipse at center, rgba(220,210,185,0.04) 0%, transparent 65%);
+  pointer-events:none;
+}
+
+.cta-eyebrow {
+  font-family:var(--mono); font-size:0.65rem; letter-spacing:.2em;
+  text-transform:uppercase; color:var(--cream2);
+  margin-bottom:2rem; display:block;
+}
+
+.cta .sec-h { margin:0 auto 1.5rem; }
+.cta .sec-sub { margin:0 auto 3.5rem; text-align:center; }
+
+.cta-buttons { display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; }
+
+/* ── FOOTER ── */
+footer {
+  padding:2.5rem 5rem;
+  border-top:1px solid var(--rule);
+  display:flex; justify-content:space-between; align-items:center;
+  position:relative; z-index:1;
+}
+
+.footer-left {
+  font-family:var(--mono); font-size:0.65rem; letter-spacing:.08em;
+  color:var(--muted);
+}
+.footer-left strong { color:var(--cream); display:block; margin-bottom:.2rem; font-weight:500; }
+
+.footer-links { display:flex; gap:2rem; list-style:none; }
+.footer-links a {
+  font-family:var(--mono); font-size:0.62rem; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--muted); text-decoration:none; transition:color .2s;
+}
+.footer-links a:hover { color:var(--cream); }
+
+.footer-right {
+  font-family:var(--mono); font-size:0.6rem; color:rgba(220,210,185,0.2);
+  letter-spacing:.05em; text-align:right;
+}
+
+/* ── MODAL ── */
+.overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,.85);
+  backdrop-filter:blur(8px);
+  z-index:500; display:flex; align-items:center; justify-content:center;
+  opacity:0; pointer-events:none; transition:opacity .3s;
+}
+.overlay.open { opacity:1; pointer-events:all; }
+
+.modal {
+  background:var(--panel); border:1px solid rgba(220,210,185,.2);
+  padding:3rem; max-width:460px; width:90%;
+  transform:translateY(16px); transition:transform .3s;
+  position:relative;
+}
+.overlay.open .modal { transform:translateY(0); }
+
+.modal-x {
+  position:absolute; top:1rem; right:1.5rem;
+  background:none; border:none; color:var(--muted);
+  font-size:1.3rem; cursor:pointer; transition:color .2s;
+}
+.modal-x:hover { color:var(--cream); }
+
+.modal h3 { font-family:var(--serif); font-size:1.4rem; margin-bottom:.5rem; }
+.modal-sub { color:var(--muted); font-size:.85rem; margin-bottom:2rem; line-height:1.6; }
+
+.mform { display:flex; flex-direction:column; gap:.9rem; }
+
+.minput {
+  background:rgba(220,210,185,.04);
+  border:1px solid var(--rule); padding:.8rem 1rem;
+  color:var(--cream); font-family:var(--sans); font-size:.85rem;
+  outline:none; transition:border-color .2s; width:100%;
+}
+.minput:focus { border-color:rgba(220,210,185,.3); }
+.minput::placeholder { color:var(--muted); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(22px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+.reveal { opacity:0; transform:translateY(24px); transition:opacity .7s ease, transform .7s ease; }
+.reveal.in { opacity:1; transform:translateY(0); }
+
+/* ── RESPONSIVE ── */
+@media(max-width:960px){
+  nav { padding:0 1.5rem; }
+  .nav-links { display:none; }
+  section { padding:5rem 1.5rem; }
+  .hero { grid-template-columns:1fr; padding:7rem 1.5rem 4rem; gap:3rem; }
+  .hero::before { display:none; }
+  .problem-grid, .stack-grid, .ai-grid { grid-template-columns:1fr; gap:3rem; }
+  .process-steps, .who-grid { grid-template-columns:1fr 1fr; }
+  .process-step { border-bottom:1px solid var(--rule); }
+  .step-arrow { display:none; }
+  .services-row { grid-template-columns:1fr 1fr; }
+  .sr-cell:nth-child(1) { display:none; }
+  footer { flex-direction:column; gap:1.5rem; text-align:center; }
+  .cta { padding:6rem 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="ruled-bg"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-brand">
+    <div class="nav-logomark">M²</div>
+    <div class="nav-wordmark">MetaMindset <span>Labs</span></div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#problem">The Problem</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#stack">The Stack</a></li>
+    <li><a href="#consult" class="nav-hire">Request a File →</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-kicker">Documentation Architecture Studio · Mumbai, India</div>
+    <h1>
+      Your data.<br>
+      Your thinking.<br>
+      <em>Publication-ready</em><br>
+      in 48 hrs.
+    </h1>
+    <p class="hero-desc">
+      MetaMindset Labs turns raw inputs — data, notes, research, briefs —
+      into <strong>precision-crafted PDF documents</strong> built in Python and LaTeX.
+      No templates. No Word. No amateur output.
+      <br><br>
+      The thing <strong>AI genuinely cannot do for you.</strong> We can.
+    </p>
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="document.getElementById('services').scrollIntoView({behavior:'smooth'})">View Services & Pricing</button>
+      <a href="#problem" class="btn-outline">Why Not Just Use AI?</a>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="rule-accent"></div>
+    <div class="specimen">
+      <div class="specimen-header">
+        <span>Active Project Brief</span>
+        <span>STATUS: OPEN</span>
+      </div>
+      <div class="specimen-body">
+        <div class="spec-line">
+          <span class="spec-key">Deliverable</span>
+          <span class="spec-val">Research Report, 28pp</span>
+        </div>
+        <div class="spec-line">
+          <span class="spec-key">Format</span>
+          <span class="spec-val mono">.pdf  /  .tex  /  .py</span>
+        </div>
+        <div class="spec-line">
+          <span class="spec-key">Input</span>
+          <span class="spec-val">Raw XLSX + analyst notes</span>
+        </div>
+        <div class="spec-line">
+          <span class="spec-key">Turnaround</span>
+          <span class="spec-val">48 hours</span>
+        </div>
+        <div class="spec-line">
+          <span class="spec-key">Engine</span>
+          <span class="spec-val mono">Python 3.12 + pdflatex</span>
+        </div>
+        <div class="spec-line">
+          <span class="spec-key">Client</span>
+          <span class="spec-val">FinTech startup, Series A</span>
+        </div>
+      </div>
+      <div class="specimen-footer">
+        <span class="spec-tag">Portable · Print-ready</span>
+        <span class="spec-tag">Vector fonts</span>
+        <span class="spec-tag live">● Taking Orders</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="problem" id="problem">
+  <div class="sec-label">The Real Problem</div>
+  <h2 class="sec-h">Why AI Can Write Your <em>Draft</em><br>But Not Your <em>Document</em></h2>
+  <p class="sec-sub">Everyone has tried to use ChatGPT or Claude for documentation. Here's exactly where it breaks — and what still requires a human with a real toolchain.</p>
+
+  <div class="problem-grid">
+    <div class="problem-col">
+      <h3>What <em>AI gives you</em></h3>
+      <div class="problem-items">
+        <div class="prob-item reveal">
+          <span class="prob-icon">✗</span>
+          <div class="prob-text"><strong>LaTeX code it can't compile</strong> Paste it into Overleaf, watch it explode with 14 errors. No TeX Live. No build environment. No finished file.</div>
+        </div>
+        <div class="prob-item reveal">
+          <span class="prob-icon">✗</span>
+          <div class="prob-text"><strong>Text that looks professional in a chat window</strong> The moment you put it into Word or Google Docs, the formatting falls apart — wrong spacing, broken tables, no consistent hierarchy.</div>
+        </div>
+        <div class="prob-item reveal">
+          <span class="prob-icon">✗</span>
+          <div class="prob-text"><strong>No connection to your actual data</strong> AI cannot read your CSV, query your database, generate your charts, and then build a document around them. That pipeline requires code + human judgement.</div>
+        </div>
+        <div class="prob-item reveal">
+          <span class="prob-icon">✗</span>
+          <div class="prob-text"><strong>Zero brand consistency</strong> Page breaks, font rendering, table widths, figure captions — AI output breaks your house style on every generation. Every single time.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="problem-col">
+      <h3>What <em>we deliver</em></h3>
+      <div class="problem-items">
+        <div class="prob-item reveal">
+          <span class="prob-icon good">✓</span>
+          <div class="prob-text"><strong>A compiled, rendered, portable PDF</strong> Not code. Not a draft. A finished file you can send to a client, investor, or journal submission portal today.</div>
+        </div>
+        <div class="prob-item reveal">
+          <span class="prob-icon good">✓</span>
+          <div class="prob-text"><strong>Data → document, end to end</strong> Send us your Excel, your notes, your rough outline. We run the Python pipeline, generate the charts, build the LaTeX structure, deliver the file.</div>
+        </div>
+        <div class="prob-item reveal">
+          <span class="prob-icon good">✓</span>
+          <div class="prob-text"><strong>Publication-quality typography</strong> Vector fonts, proper kerning, consistent spacing, academically formatted references — output that looks like it was typeset, because it was.</div>
+        </div>
+        <div class="prob-item reveal">
+          <span class="prob-icon good">✓</span>
+          <div class="prob-text"><strong>You own the source files</strong> Every project comes with the full .tex and .py source. Run it again, update the numbers, regenerate in seconds. Not a black box.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHO -->
+<section class="who" id="who">
+  <div class="sec-label">Who This Is For</div>
+  <h2 class="sec-h">Four Clients. One <em>Exact</em> Pain.</h2>
+  <p class="sec-sub">The raw material exists. The content is ready. The document just needs to look like it was made by someone who takes precision seriously.</p>
+
+  <div class="who-grid reveal">
+    <div class="who-card">
+      <div class="who-icon">🎓</div>
+      <div class="who-title">Indie Researchers<br>& PhD Students</div>
+      <p class="who-desc">You have the thesis, the data, the citations. You need a document your committee won't embarrass you with. LaTeX is a full-time skill you don't have time to learn right now.</p>
+      <div class="who-pain">6 hrs lost wrestling with LaTeX on a deadline</div>
+    </div>
+    <div class="who-card">
+      <div class="who-icon">🚀</div>
+      <div class="who-title">Startup Founders<br>& Early Teams</div>
+      <p class="who-desc">Your investor deck is a Canva file. Your data room is a Google Drive folder. You need one clean, branded, printable PDF that says "we are professional" before you say a word.</p>
+      <div class="who-pain">₹50K agency quotes for a 12-page report</div>
+    </div>
+    <div class="who-card">
+      <div class="who-icon">📊</div>
+      <div class="who-title">Analysts With<br>Data, No Format</div>
+      <p class="who-desc">The numbers are done. The insight is there. But your boss or client is getting a raw Excel with 8 tabs instead of a 20-page structured analysis they can actually read and act on.</p>
+      <div class="who-pain">Insight buried in spreadsheets nobody opens</div>
+    </div>
+    <div class="who-card">
+      <div class="who-icon">🏢</div>
+      <div class="who-title">SMEs Needing<br>Branded Docs</div>
+      <p class="who-desc">You've outgrown Word templates but can't justify an in-house designer. Company profiles, proposals, SOPs, annual summaries — they all need to look like you care about your brand.</p>
+      <div class="who-pain">Word docs that embarrass you when printed</div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES TABLE -->
+<section class="services" id="services">
+  <div class="sec-label">Services & Pricing</div>
+  <h2 class="sec-h">Transparent Rates.<br><em>No Surprises.</em></h2>
+  <p class="sec-sub">Fixed-scope packages. You know exactly what you're getting and what it costs before we start.</p>
+
+  <div class="services-table reveal">
+    <!-- HEADER -->
+    <div class="services-row header">
+      <div class="sr-cell header-cell"></div>
+      <div class="sr-cell header-cell">Service</div>
+      <div class="sr-cell header-cell">What's Included</div>
+      <div class="sr-cell header-cell">From</div>
+      <div class="sr-cell header-cell"></div>
+    </div>
+
+    <!-- ROW 1 -->
+    <div class="services-row">
+      <div class="sr-cell"><span class="sr-num">01</span></div>
+      <div class="sr-cell sr-name">
+        Document Architecture
+        <span>PDF Engineering</span>
+      </div>
+      <div class="sr-cell sr-desc">
+        You provide raw content. We design the structure, build the LaTeX template, compile a print-ready PDF.
+        <div class="sr-desc-tags">
+          <span class="tag">LaTeX</span><span class="tag">Custom layout</span><span class="tag">48hr turnaround</span>
+        </div>
+      </div>
+      <div class="sr-cell sr-price">₹1,499<small>/project</small></div>
+      <div class="sr-cell sr-action">
+        <button class="pay-btn" onclick="pay('Document Architecture', 1499, this)">Order →</button>
+      </div>
+    </div>
+
+    <!-- ROW 2 -->
+    <div class="services-row">
+      <div class="sr-cell"><span class="sr-num">02</span></div>
+      <div class="sr-cell sr-name">
+        Portable Documentation
+        <span>Data → PDF Pipeline</span>
+      </div>
+      <div class="sr-cell sr-desc">
+        Send us your data (CSV/XLSX/JSON). We build a Python pipeline to generate charts, tables, and a complete PDF report.
+        <div class="sr-desc-tags">
+          <span class="tag">Python</span><span class="tag">matplotlib/plotly</span><span class="tag">Source files included</span>
+        </div>
+      </div>
+      <div class="sr-cell sr-price">₹3,499<small>/report</small></div>
+      <div class="sr-cell sr-action">
+        <button class="pay-btn featured" onclick="pay('Portable Documentation', 3499, this)">Order →</button>
+      </div>
+    </div>
+
+    <!-- ROW 3 -->
+    <div class="services-row">
+      <div class="sr-cell"><span class="sr-num">03</span></div>
+      <div class="sr-cell sr-name">
+        Structured Reports
+        <span>Research & Academic</span>
+      </div>
+      <div class="sr-cell sr-desc">
+        Full research / thesis / white paper typesetting. Bibliography, cross-references, figures, appendices — journal-submission quality.
+        <div class="sr-desc-tags">
+          <span class="tag">BibTeX</span><span class="tag">Multi-section</span><span class="tag">Citation styles</span>
+        </div>
+      </div>
+      <div class="sr-cell sr-price">₹2,999<small>/doc</small></div>
+      <div class="sr-cell sr-action">
+        <button class="pay-btn" onclick="pay('Structured Reports', 2999, this)">Order →</button>
+      </div>
+    </div>
+
+    <!-- ROW 4 -->
+    <div class="services-row">
+      <div class="sr-cell"><span class="sr-num">04</span></div>
+      <div class="sr-cell sr-name">
+        PDF Engineering
+        <span>Branded SME Docs</span>
+      </div>
+      <div class="sr-cell sr-desc">
+        Company profiles, investor decks, branded proposals, SOPs. Your colours, your fonts, your logo — in a document that looks designed.
+        <div class="sr-desc-tags">
+          <span class="tag">Brand-matched</span><span class="tag">Print + digital</span><span class="tag">Revision included</span>
+        </div>
+      </div>
+      <div class="sr-cell sr-price">₹4,999<small>/pack</small></div>
+      <div class="sr-cell sr-action">
+        <button class="pay-btn" onclick="pay('PDF Engineering', 4999, this)">Order →</button>
+      </div>
+    </div>
+
+    <!-- ROW 5 — RETAINER -->
+    <div class="services-row">
+      <div class="sr-cell"><span class="sr-num">05</span></div>
+      <div class="sr-cell sr-name">
+        Monthly Retainer
+        <span>Ongoing Documentation</span>
+      </div>
+      <div class="sr-cell sr-desc">
+        For teams with recurring documentation needs. Priority turnaround, dedicated slot, up to 4 documents per month.
+        <div class="sr-desc-tags">
+          <span class="tag">Priority queue</span><span class="tag">4 docs/month</span><span class="tag">Slack/WhatsApp support</span>
+        </div>
+      </div>
+      <div class="sr-cell sr-price">₹8,999<small>/month</small></div>
+      <div class="sr-cell sr-action">
+        <button class="pay-btn" onclick="openModal('Monthly Retainer')">Talk First →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process" id="process">
+  <div class="sec-label">How It Works</div>
+  <h2 class="sec-h">Brief to <em>Delivered File</em><br>in Four Steps</h2>
+
+  <div class="process-steps reveal">
+    <div class="process-step">
+      <div class="step-n">Step 01</div>
+      <div class="step-title">Send Your Raw Material</div>
+      <p class="step-desc">Rough notes, Excel files, a voice memo, a scanned whiteboard — anything. We've worked from messier inputs than yours.</p>
+      <div class="step-arrow">→</div>
+    </div>
+    <div class="process-step">
+      <div class="step-n">Step 02</div>
+      <div class="step-title">We Scope & Confirm</div>
+      <p class="step-desc">Within 4 hours, you receive a clear scope: deliverable, format, turnaround time, fixed price. You approve before we start.</p>
+      <div class="step-arrow">→</div>
+    </div>
+    <div class="process-step">
+      <div class="step-n">Step 03</div>
+      <div class="step-title">Build & Compile</div>
+      <p class="step-desc">Python pipelines run. LaTeX compiles. Charts render. We iterate until the output is genuinely excellent — not just technically correct.</p>
+      <div class="step-arrow">→</div>
+    </div>
+    <div class="process-step">
+      <div class="step-n">Step 04</div>
+      <div class="step-title">Delivery + Source Files</div>
+      <p class="step-desc">You receive the final PDF, the .tex source, and the Python scripts. One revision included. You own everything.</p>
+    </div>
+  </div>
+</section>
+
+<!-- STACK -->
+<section class="stack" id="stack">
+  <div class="sec-label">The Technical Stack</div>
+  <h2 class="sec-h">Built on Tools That<br><em>Actually Compile.</em></h2>
+  <p class="sec-sub">Not a drag-and-drop builder. Not a Word macro. A real engineering stack for people who need files that work everywhere.</p>
+
+  <div class="stack-grid">
+    <div class="stack-code">
+      <div class="code-header">
+        <div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div>
+        <span class="code-filename">report_builder.py</span>
+      </div>
+      <div class="code-body">
+<span class="c-comment"># MetaMindset Labs — PDF pipeline</span>
+<span class="c-key">import</span> pandas <span class="c-key">as</span> pd
+<span class="c-key">import</span> matplotlib.pyplot <span class="c-key">as</span> plt
+<span class="c-key">from</span> jinja2 <span class="c-key">import</span> Environment
+<span class="c-key">import</span> subprocess, os
+
+<span class="c-comment"># 1. Load client data</span>
+df = pd.<span class="c-fn">read_excel</span>(<span class="c-str">"client_data.xlsx"</span>)
+
+<span class="c-comment"># 2. Generate figures</span>
+fig, ax = plt.<span class="c-fn">subplots</span>(figsize=(<span class="c-num">6</span>, <span class="c-num">3.5</span>))
+df.<span class="c-fn">plot</span>(ax=ax, kind=<span class="c-str">"bar"</span>, color=<span class="c-str">"#c8bc9e"</span>)
+fig.<span class="c-fn">savefig</span>(<span class="c-str">"output/fig1.pdf"</span>, bbox_inches=<span class="c-str">"tight"</span>)
+
+<span class="c-comment"># 3. Render LaTeX template</span>
+env = Environment(...)
+template = env.<span class="c-fn">get_template</span>(<span class="c-str">"report.tex.j2"</span>)
+rendered = template.<span class="c-fn">render</span>(data=df.<span class="c-fn">to_dict</span>())
+
+<span class="c-comment"># 4. Write & compile</span>
+<span class="c-key">with</span> <span class="c-fn">open</span>(<span class="c-str">"output/report.tex"</span>, <span class="c-str">"w"</span>) <span class="c-key">as</span> f:
+    f.<span class="c-fn">write</span>(rendered)
+
+subprocess.<span class="c-fn">run</span>([<span class="c-str">"pdflatex"</span>, <span class="c-str">"report.tex"</span>])
+
+<span class="c-comment"># → report.pdf delivered to client</span>
+      </div>
+    </div>
+
+    <div class="stack-right">
+      <div class="tech-item reveal">
+        <span class="tech-badge">Python 3.12</span>
+        <div>
+          <div class="tech-name">Data Pipeline & Automation</div>
+          <div class="tech-desc">pandas for data wrangling, matplotlib/plotly for chart generation, jinja2 for LaTeX template rendering. Your data flows into your document without manual copy-paste.</div>
+        </div>
+      </div>
+      <div class="tech-item reveal">
+        <span class="tech-badge">LaTeX / pdfLaTeX</span>
+        <div>
+          <div class="tech-name">Professional Typesetting</div>
+          <div class="tech-desc">The standard for academic publishing, technical documentation, and anything that needs to look like it was typeset. Vector fonts, proper kerning, BibTeX citations, reproducible output.</div>
+        </div>
+      </div>
+      <div class="tech-item reveal">
+        <span class="tech-badge">Jinja2</span>
+        <div>
+          <div class="tech-name">Template Architecture</div>
+          <div class="tech-desc">Dynamic LaTeX templates that accept your data as variables. Change the numbers, regenerate the entire document in seconds. No manual edits, no formatting re-work.</div>
+        </div>
+      </div>
+      <div class="tech-item reveal">
+        <span class="tech-badge">Git + Delivery</span>
+        <div>
+          <div class="tech-name">Source Ownership</div>
+          <div class="tech-desc">Every project delivered as a versioned repository. .tex files, .py scripts, assets — everything you need to own, extend, and reuse the document yourself.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AI CONSULT -->
+<section class="ai-sec" id="consult">
+  <div class="ai-grid">
+    <div>
+      <div class="sec-label">DocBot — Free Consult</div>
+      <h2 class="sec-h">Describe Your<br><em>Document.</em><br>Get a Scope.</h2>
+      <p class="sec-sub" style="margin-bottom:2rem;">
+        Tell DocBot what you need — the type of document, your raw inputs, your deadline.
+        It'll give you a realistic scope estimate and flag what you need to prepare.
+        Free. No obligation.
+      </p>
+      <div style="display:flex;flex-direction:column;gap:.7rem;">
+        <div style="display:flex;align-items:center;gap:.9rem;font-size:.82rem;color:var(--muted);">
+          <span style="font-family:var(--mono);font-size:.65rem;color:var(--cream2)">✓</span> Scope estimates for any document type
+        </div>
+        <div style="display:flex;align-items:center;gap:.9rem;font-size:.82rem;color:var(--muted);">
+          <span style="font-family:var(--mono);font-size:.65rem;color:var(--cream2)">✓</span> Tells you exactly what to prepare before ordering
+        </div>
+        <div style="display:flex;align-items:center;gap:.9rem;font-size:.82rem;color:var(--muted);">
+          <span style="font-family:var(--mono);font-size:.65rem;color:var(--cream2)">✓</span> Honest about what's feasible in your timeline
+        </div>
+      </div>
+    </div>
+
+    <div class="chat-terminal reveal">
+      <div class="terminal-bar">
+        <div class="t-dot"></div><div class="t-dot"></div><div class="t-dot"></div>
+        <span class="terminal-title">DocBot — MetaMindset Labs</span>
+        <span class="t-live">Online</span>
+      </div>
+
+      <div class="chat-log" id="chatLog">
+        <div class="tlog">
+          <span class="tlog-who">docbot</span>
+          <div class="tlog-msg">Hello. Describe the document you need — type, purpose, approximate length, and what raw inputs you have. I'll give you a realistic scope and what to expect.</div>
+        </div>
+      </div>
+
+      <div class="chip-row">
+        <button class="chip" onclick="useChip(this)">I need a research report PDF</button>
+        <button class="chip" onclick="useChip(this)">Data → formatted report</button>
+        <button class="chip" onclick="useChip(this)">Startup pitch document</button>
+        <button class="chip" onclick="useChip(this)">Thesis typesetting</button>
+      </div>
+
+      <div class="chat-prompt">
+        <span class="chat-prompt-label">›</span>
+        <input type="text" id="chatIn" placeholder="Describe your document..." onkeydown="if(event.key==='Enter') sendChat()">
+        <button onclick="sendChat()">Send</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <span class="cta-eyebrow">Ready to Order?</span>
+  <h2 class="sec-h">Send us your raw inputs.<br>Get back a <em>real document.</em></h2>
+  <p class="sec-sub">No templates. No Word. No "it looked fine on my screen." A properly engineered, portable, publication-ready PDF — built on Python and LaTeX, delivered in 48 hours.</p>
+  <div class="cta-buttons">
+    <button class="btn-primary" onclick="pay('Portable Documentation', 3499, this)">Order Now — from ₹1,499</button>
+    <button class="btn-outline" onclick="openModal('General Enquiry')">Talk to Gyanankur First</button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <strong>MetaMindset Labs</strong>
+    Documentation Architecture Studio · Mumbai, India
+  </div>
+  <ul class="footer-links">
+    <li><a href="#problem">The Problem</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#stack">Stack</a></li>
+    <li><a href="https://www.linkedin.com/company/metamindset-labs" target="_blank">LinkedIn ↗</a></li>
+  </ul>
+  <div class="footer-right">
+    © 2025 MetaMindset Labs<br>
+    Founded by Gyanankur Baruah<br>
+    BAFC™ SFC™ KEC™ CPEFPC™
+  </div>
+</footer>
+
+<!-- MODAL -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <button class="modal-x" onclick="closeModal()">×</button>
+    <h3 id="mTitle">Talk to Gyanankur</h3>
+    <p class="modal-sub" id="mSub">Leave your details and Gyanankur will personally scope your project within 24 hours.</p>
+    <div class="mform" id="mForm">
+      <input class="minput" id="mName" placeholder="Your Name">
+      <input class="minput" id="mEmail" placeholder="Email Address" type="email">
+      <input class="minput" id="mType" placeholder="Document type & rough description">
+      <textarea class="minput" id="mMsg" rows="3" placeholder="What raw inputs do you have? (data, notes, drafts...)" style="resize:vertical"></textarea>
+      <button class="btn-primary" style="width:100%;text-align:center;" onclick="submitForm()">Send Brief →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── SCROLL REVEAL ──
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('in'); });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+// ── RAZORPAY ──
+function pay(name, amount, btn) {
+  const orig = btn.textContent;
+  btn.textContent = 'Opening…'; btn.disabled = true;
+
+  // ⚠️ Replace with your Razorpay Key ID from razorpay.com/dashboard
+  const KEY = 'rzp_test_REPLACE_WITH_YOUR_KEY';
+
+  const opts = {
+    key: KEY,
+    amount: amount * 100,
+    currency: 'INR',
+    name: 'MetaMindset Labs',
+    description: name,
+    handler(r) { paySuccess(name, r.razorpay_payment_id); },
+    theme: { color: '#ddd4b9' },
+    modal: { ondismiss() { btn.textContent = orig; btn.disabled = false; } }
+  };
+
+  try {
+    const rzp = new Razorpay(opts);
+    rzp.on('payment.failed', () => {
+      alert('Payment failed — please try again or contact via LinkedIn.');
+      btn.textContent = orig; btn.disabled = false;
+    });
+    rzp.open();
+  } catch(e) {
+    alert('To activate payments: replace "rzp_test_REPLACE_WITH_YOUR_KEY" in the HTML with your actual Razorpay Key ID from razorpay.com/dashboard → Settings → API Keys.');
+    btn.textContent = orig; btn.disabled = false;
+  }
+}
+
+function paySuccess(name, pid) {
+  document.getElementById('mTitle').textContent = '✓ Order Confirmed';
+  document.getElementById('mSub').innerHTML =
+    `<strong>${name}</strong> — payment received.<br>
+    Payment ID: <code style="font-family:var(--mono);font-size:.72rem;color:var(--cream2)">${pid}</code><br><br>
+    Gyanankur will reach out within 4 hours to collect your raw inputs and confirm the brief.`;
+  document.getElementById('mForm').style.display = 'none';
+  document.getElementById('overlay').classList.add('open');
+}
+
+// ── MODAL ──
+function openModal(ctx) {
+  document.getElementById('mTitle').textContent = 'Talk to Gyanankur';
+  document.getElementById('mSub').textContent = 'Describe your document and Gyanankur will personally scope it within 24 hours.';
+  document.getElementById('mForm').style.display = 'flex';
+  if(ctx !== 'General Enquiry') document.getElementById('mType').value = ctx;
+  document.getElementById('overlay').classList.add('open');
+}
+function closeModal() { document.getElementById('overlay').classList.remove('open'); }
+document.getElementById('overlay').addEventListener('click', e => { if(e.target === e.currentTarget) closeModal(); });
+
+function submitForm() {
+  const n = document.getElementById('mName').value;
+  const em = document.getElementById('mEmail').value;
+  if(!n || !em) { alert('Please enter your name and email.'); return; }
+  document.getElementById('mTitle').textContent = '✓ Brief Received';
+  document.getElementById('mSub').innerHTML =
+    `Thanks <strong>${n}</strong> — Gyanankur will reach out to <strong>${em}</strong> within 24 hours.<br><br>
+    Meanwhile: <a href="https://www.linkedin.com/in/gyanankur-baruah-bafc%E2%84%A2-sfc%E2%84%A2-kec%E2%84%A2-cpefpc%E2%84%A2-797205338" target="_blank" style="color:var(--cream2)">Connect on LinkedIn →</a>`;
+  document.getElementById('mForm').style.display = 'none';
+}
+
+// ── DOCBOT AI ──
+async function sendChat() {
+  const inp = document.getElementById('chatIn');
+  const txt = inp.value.trim();
+  if(!txt) return;
+  inp.value = '';
+  addMsg(txt, 'user');
+  showTyping();
+
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        system: `You are DocBot, the scoping assistant for MetaMindset Labs — a documentation architecture studio in Mumbai, India, founded by Gyanankur Baruah. MetaMindset Labs builds professional PDF documents using Python and LaTeX for researchers, startup founders, analysts, and SMEs.
+
+Your job is to help visitors understand what kind of document they need, what raw inputs to prepare, how long it will take, and which service fits them. You are concise, precise, and practical — like a good technical consultant.
+
+Services and pricing:
+- Document Architecture (LaTeX layout) — from ₹1,499 / 48hr turnaround
+- Portable Documentation (Python data → PDF report) — from ₹3,499
+- Structured Reports (research/thesis/white paper) — from ₹2,999
+- PDF Engineering (branded SME docs) — from ₹4,999
+- Monthly Retainer (4 docs/month, priority) — ₹8,999/month
+
+Key differentiator: We deliver compiled, portable PDFs with source files (.tex + .py) — not just LaTeX code that the client has to compile themselves. AI tools generate code but not finished files. We deliver finished files.
+
+Be helpful, honest about timelines, and always end with a clear next step (either "Order via the services table" or "Use the contact form to brief us"). Keep responses to 3–5 sentences max.`,
+        messages: [{ role: "user", content: txt }]
+      })
+    });
+    const d = await res.json();
+    hideTyping();
+    const reply = d.content?.find(b => b.type === 'text')?.text || "Connection issue — please try again.";
+    addMsg(reply, 'bot');
+  } catch {
+    hideTyping();
+    addMsg("Connection hiccup — try again in a moment.", 'bot');
+  }
+}
+
+function useChip(btn) {
+  document.getElementById('chatIn').value = btn.textContent;
+  sendChat();
+}
+
+function addMsg(text, role) {
+  const log = document.getElementById('chatLog');
+  const d = document.createElement('div');
+  d.className = `tlog ${role === 'user' ? 'user' : ''}`;
+  d.innerHTML = `
+    <span class="tlog-who">${role === 'user' ? 'you' : 'docbot'}</span>
+    <div class="tlog-msg">${text.replace(/\n/g,'<br>')}</div>`;
+  log.appendChild(d);
+  log.scrollTop = log.scrollHeight;
+}
+
+let typEl = null;
+function showTyping() {
+  const log = document.getElementById('chatLog');
+  typEl = document.createElement('div');
+  typEl.className = 'tlog'; typEl.id = 'typing';
+  typEl.innerHTML = `<span class="tlog-who">docbot</span>
+    <div class="typing-dots">
+      <div class="t-dot-anim"></div><div class="t-dot-anim"></div><div class="t-dot-anim"></div>
+    </div>`;
+  log.appendChild(typEl);
+  log.scrollTop = log.scrollHeight;
+}
+function hideTyping() { document.getElementById('typing')?.remove(); }
+</script>
+</body>
+</html>
